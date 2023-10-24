@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards ,Request} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto,SignUpDto } from './dto/user-auth.dto';
-
+import { LoginDto, SignUpDto } from './dto/user-auth.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -13,14 +13,15 @@ export class AuthController {
   }
 
   @Post('signup')
-  signup(@Body() createAuthDto: SignUpDto):Promise <any>{
+  signup(@Body() createAuthDto: SignUpDto): Promise<any> {
     return this.authService.signup(createAuthDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('current')
-  currentUser() {
-    return this.authService.currentUser();
-  }
+  getProfile(@Request() req) {
+    return req.user;
+}
 
 
 
